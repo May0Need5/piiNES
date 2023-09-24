@@ -100,12 +100,10 @@ a:hover
 }
 
 .butts {
-	/* margin-right: 25px;
-    width: 20%;
-    max-width: 269px;
-    right: 2%; */
-    position: relative;
-    /* top: 15%; */
+	position: relative;
 	display: flex;
 	width: 90%;
+}
+#nes-canvas {
+	max-height: 800px;
 }
