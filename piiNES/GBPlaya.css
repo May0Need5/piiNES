@@ -1,0 +1,275 @@
+
+
+body {
+	font-family: Courier, monospaced;
+    font-size: 16px;
+    font-weight: bold;
+    align-items: center;
+    background-color: #000000d9;
+    width: 450px;
+    overflow: hidden;
+    margin: 0;
+	}
+
+.off {
+    display: none;
+}
+
+.GB-Wrapper {
+
+    
+    margin: 0 auto;
+    justify-content: center;
+    display: block;
+    width: 450px;
+    min-height: 880px;
+    max-height: 880px;
+   
+
+}
+
+.player-wrapper {
+
+    height: 1px;
+}
+
+.powerButton {
+    position: relative;
+    display: flex;
+    z-index: 2;
+    width: 1rem;
+    height: 1rem;
+
+}
+
+.GB-Wrapper img {
+
+    width: 100%;
+    min-height: 865px;
+    max-height: 865px;
+    position: absolute;
+    max-width: 445px;
+    min-width: 445px;
+}
+
+.player1 {
+    position: relative;
+    display: block;
+    left: 37px;
+    top: 66px;
+}
+ 
+
+.glow {
+    position: absolute;
+    box-shadow: 0px 0px 20px 6px #a3d2ddb5;
+    border-radius: 5px;
+    width: 338px;
+    height: 276px;
+    z-index: 1000;
+    left: 63px;
+    top: 58px;
+  
+}
+
+.player-interaction {
+    border: 1px solid red;
+    margin-top: 481px;
+    position: relative;
+    z-index: 666;
+    width: 424px;
+    height: 365px;
+    margin: 0 auto;
+    display: block;
+    top: 481px;
+}
+
+.screen {
+    border: 1px solid green;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    z-index: 9;
+    width: 20%;
+
+}
+
+#nes-canvas {
+
+    margin-left: 62px;
+    top: 60px;
+    background: #000;
+    position: relative;
+    justify-content: center;
+    min-height: 280px;
+    max-height: 280px;
+    min-width: 338px;
+    max-width: 338px;
+    }
+
+
+.buttons-wrapper {
+
+    top: 3px;
+    left: -2px;
+    position: absolute;
+    max-width: 450px;
+    min-width: 450px;
+    max-height: 855px;
+    min-height: 855px;
+}
+
+.PowerButton {
+    background: transparent;
+    width: 50px;
+    height: 50px;
+    position: relative;
+    border: 1px solid red;
+    border-radius: 50%;
+    display: block;
+    z-index: 1000;
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 5px;
+    left: 2px;
+    font-size: 10px;
+    top: 491px;
+    
+}
+
+
+
+.UpButton {
+    background: transparent;
+    padding-bottom: 4px;
+    font-size: 30px;
+    font-weight: bold;
+    width: 35px;
+    height: 55px;
+    position: relative;
+    border: 1px solid red;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    display: block;
+    z-index: 1000;
+    text-align: center;
+    left: 97px;
+    top: 230px;
+}
+
+.DownButton {
+    background: transparent;
+    padding-bottom: 4px;
+    font-size: 30px;
+    font-weight: bold;
+    width: 35px;
+    height: 55px;
+    position: relative;
+    border: 1px solid red;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    display: block;
+    z-index: 1000;
+    text-align: center;
+    left: 97px;
+    top: 263px;
+}
+
+.LeftButton {
+    background: transparent;
+    font-size: 30px;
+    font-weight: bold;
+    width: 55px;
+    height: 35px;
+    position: relative;
+    border: 1px solid red;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    display: block;
+    z-index: 1000;
+    text-align: center;
+    left: 43px;
+    top: 174px;
+    line-height: 0.8;
+    padding-left: 3px;
+}
+
+.RightButton {
+    background: transparent;
+    font-size: 30px;
+    font-weight: bold;
+    width: 55px;
+    height: 35px;
+    position: relative;
+    border: 1px solid red;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    display: block;
+    z-index: 1000;
+    text-align: center;
+    left: 131px;
+    top: 139px;
+    line-height: 0.8;
+    padding-left: 3px;
+}
+
+.BButton {
+    background: transparent;
+    width: 70px;
+    height: 70px;
+    position: relative;
+    border: 1px solid red;
+    border-radius: 50%;
+    display: block;
+    z-index: 1000;
+    text-align: center;
+    padding-top: 5px;
+    left: 265px;
+    top: 535px;
+}
+
+.AButton {
+    background: transparent;
+    width: 70px;
+    height: 70px;
+    position: relative;
+    border: 1px solid red;
+    border-radius: 50%;
+    display: block;
+    z-index: 1000;
+    text-align: center;
+    padding-top: 5px;
+    left: 335px;
+    top: 445px;
+}
+
+.StartButton {
+    background: transparent;
+    width: 60px;
+    height: 60px;
+    position: relative;
+    border: 1px solid red;
+    border-radius: 50%;
+    display: block;
+    z-index: 1000;
+    text-align: center;
+    padding-top: 5px;
+    left: 234px;
+    top: 523px;
+}
+
+.SelectButton {
+    background: transparent;
+    width: 60px;
+    height: 60px;
+    position: relative;
+    border: 1px solid red;
+    border-radius: 50%;
+    display: block;
+    z-index: 1000;
+    text-align: center;
+    padding-top: 5px;
+    left: 156px;
+    top: 583px;
+}
+

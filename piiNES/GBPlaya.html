@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>GAYmBoi Playa</title>
+	
+	<link rel="stylesheet" href="GBPlaya.css"/>
+	<script src="js/jsnes.min.js"></script>
+</head>
+
+<body>
+
+
+
+	
+		<div class="player-wrapper">
+		<canvas id="nes-canvas"  width="256" height="240" ></canvas>
+		</div>
+		
+	<div class="buttons-wrapper">
+		<button id="vPower-button" class="PowerButton"></button>
+		
+		
+		<button id="vB-button" class="BButton"></button>
+		<button id="vA-button" class="AButton"></button>
+
+		<button id="vSelect-button" class="SelectButton"></button>
+		<button id="vStart-button" class="StartButton"></button>
+
+		<button id="vUp-button" class="UpButton">&uarr;</button>
+		<button id="vDown-button" class="DownButton">&darr;</button>
+		<button id="vLeft-button" class="LeftButton">&larr;</button>
+		<button id="vRight-button" class="RightButton">&rarr;</button>
+	</div>	
+
+	<div class="GB-Wrapper">
+		<div class="off glow" id="power-on-glow"></div>
+	 	<img class="" src="images/GB_NoScreen_MainREsize.png">
+		<img class="off" src="images/GB_Screen.png">
+		<img class="" src="images/ButtonPower_Off.png">
+		<img class="off" id="power-on-button" src="images/ButtonPower_On.png">
+		<img class="off screenglow" src="images/GB_ScreenGlow.png">
+		<img class="" src="images/ButtonSelect_unpressed.png">
+		<img class="off" id="button-Select-pressed" src="images/ButtonSelect_pressed.png">
+		<img class="" src="images/ButtonStart_unpressed.png">
+		<img class="off" id="button-Start-pressed" src="images/ButtonStart_pressed.png">
+		<img class="" src="images/ButtonB_unpressed.png">
+		<img class="off" id="button-B-pressed" src="images/ButtonB_pressed.png">
+		<img class="" src="images/ButtonA_unpressed.png">
+		<img class="off" id="button-A-pressed" src="images/ButtonA_pressed.png">
+		
+		
+
+		
+		
+	</div>
+
+
+
+<script> 
+
+
+	//  Toggle Element Class for Show or Hide
+
+    function toggleClass(element, className) {
+        if (!element || !className) {
+            return;
+        }
+
+        var classString = element.className, nameIndex = classString.indexOf(className);
+        if (nameIndex == -1) {
+            classString += '' + className;
+        }
+        else {
+            classString = classString.substr(0, nameIndex) + classString.substr(nameIndex+className.length);
+        }
+        element.className = classString;
+    };
+
+	var nesRunning = false;
+	
+	
+	function nesStart()
+	{
+		
+		nesRunning = true;
+	
+		var canvas  = document.getElementById("nes-canvas");
+		var context = canvas.getContext("2d");
+		var image   = context.getImageData(0, 0, 256, 240);	
+		var framebuffer = new ArrayBuffer(image.data.length);
+		var framebuffer_u8 = new Uint8ClampedArray(framebuffer);
+		var framebuffer_u32 = new Uint32Array(framebuffer);
+	
+		var AUDIO_BUFFERING = 512;
+		var SAMPLE_COUNT = 4*1024;
+		var SAMPLE_MASK = SAMPLE_COUNT - 1;
+		var audio_samples_L = new Float32Array(SAMPLE_COUNT);
+		var audio_samples_R = new Float32Array(SAMPLE_COUNT);
+		var audio_write_cursor = 0, audio_read_cursor = 0;
+	
+		// setup audio - uses ScriptProcessor, which is deprecated
+		var audioContext = new AudioContext();
+		var audioProcessor = audioContext.createScriptProcessor(AUDIO_BUFFERING, 0, 2);
+		audioProcessor.connect(audioContext.destination);
+	
+		function audio_remain()
+		{  return (audio_write_cursor - audio_read_cursor) & SAMPLE_MASK;  }
+	
+		// when the Audio processor requests new samples to play
+		audioProcessor.onaudioprocess = function(audioEvent)
+		{
+			// attempt to avoid buffer underruns
+			if( audio_remain() < AUDIO_BUFFERING ) 
+				return;
+	
+			var len = audioEvent.outputBuffer.length;
+	
+			for(var i = 0; i < len; i++)
+			{
+				// output (play) the buffers
+				var src_idx = (audio_read_cursor + i) & SAMPLE_MASK;
+				audioEvent.outputBuffer.getChannelData(0)[i] = audio_samples_L[src_idx];
+				audioEvent.outputBuffer.getChannelData(1)[i] = audio_samples_R[src_idx];
+			}
+			
+			audio_read_cursor = (audio_read_cursor + len) & SAMPLE_MASK;
+		};
+	
+		const urlParams = new URLSearchParams(window.location.search);
+	
+		const fileBase = (urlParams.has("file")) ? urlParams.get("file") : "mmii";
+		const fileName = "roms/" + fileBase + ".nes";
+	
+		const req = new XMLHttpRequest();
+		req.open("GET", fileName);
+		req.overrideMimeType("text/plain; charset=x-user-defined");
+		req.onerror = function() { console.log(`Error loading ${path}: ${req.statusText}`); }
+		req.onload = function() 
+		{
+			var nes = new jsnes.NES({
+	
+				onFrame: function(framebuffer_24)
+				{
+					for(var i = 0; i < 256*240; i++) 
+						framebuffer_u32[i] = 0xFF000000 | framebuffer_24[i];
+					image.data.set(framebuffer_u8);
+					context.putImageData(image, 0, 0);
+				},
+	
+				onAudioSample: function(left, right)
+				{
+					audio_samples_L[audio_write_cursor] = left;
+					audio_samples_R[audio_write_cursor] = right;
+					audio_write_cursor = (audio_write_cursor + 1) & SAMPLE_MASK;
+				},
+			});
+	
+			nes.loadROM(req.responseText);
+	
+			// 60 fps loop
+			setInterval(nes.frame, 16.6);
+	
+			// 88: "X", 67: "C", 32: "Space", 13: "Enter"
+		var keyNames = {
+		  37: "LEFT", 38: "UP", 39: "RIGHT",  40: "DOWN",
+		  88: "B",    67: "A",  32: "SELECT", 13: "START"
+		};
+
+		
+		// controller #1 key listeners
+		document.onkeydown = function(eventData) {
+		  nes.buttonDown(1, jsnes.Controller["BUTTON_" + keyNames[eventData.keyCode]]);
+		};
+		
+		document.onkeyup = function(eventData) {
+		  nes.buttonUp(1, jsnes.Controller["BUTTON_" + keyNames[eventData.keyCode]]);
+		};
+		
+		// B Button
+		var vBButton = document.getElementById("vB-button");
+		var isButtonPressed = false;
+
+		function pressBButton() {
+		var keyEvent = new KeyboardEvent("keydown", { keyCode: 88 });
+		document.dispatchEvent(keyEvent);
+		isButtonPressed = true;
+		
+		}
+
+		function releaseBButton() {
+		var keyUpEvent = new KeyboardEvent("keyup", { keyCode: 88 });
+		document.dispatchEvent(keyUpEvent);
+		isButtonPressed = false;
+		
+		}
+
+		vBButton.addEventListener("mousedown", function() {
+		pressBButton();
+		toggleClass(document.getElementById("button-B-pressed"),"off");
+		});
+
+		vBButton.addEventListener("mouseup", function() {
+		releaseBButton();
+		toggleClass(document.getElementById("button-B-pressed"),"off");
+		});
+
+		vBButton.addEventListener("mouseout", function() {
+		releaseBButton();
+		});
+
+		// A Button
+		var vAButton = document.getElementById("vA-button");
+		var isButtonPressed = false;
+		
+		function pressAButton() {
+		var keyEvent = new KeyboardEvent("keydown", { keyCode: 67 });
+		document.dispatchEvent(keyEvent);
+		isButtonPressed = true;
+		}
+
+		function releaseAButton() {
+		var keyUpEvent = new KeyboardEvent("keyup", { keyCode: 67 });
+		document.dispatchEvent(keyUpEvent);
+		isButtonPressed = false;
+		}
+
+		vAButton.addEventListener("mousedown", function() {
+		pressAButton();
+		toggleClass(document.getElementById("button-A-pressed"),"off");
+		});
+
+		vAButton.addEventListener("mouseup", function() {
+		releaseAButton();
+		toggleClass(document.getElementById("button-A-pressed"),"off");
+		});
+
+		vAButton.addEventListener("mouseout", function() {
+		releaseAButton();
+		});
+
+
+		// SELECT Button
+		var vSelectButton = document.getElementById("vSelect-button");
+		var isButtonPressed = false;
+		
+		function pressSelectButton() {
+		var keyEvent = new KeyboardEvent("keydown", { keyCode: 32 });
+		document.dispatchEvent(keyEvent);
+		isButtonPressed = true;
+		}
+
+		function releaseSelectButton() {
+		var keyUpEvent = new KeyboardEvent("keyup", { keyCode: 32 });
+		document.dispatchEvent(keyUpEvent);
+		isButtonPressed = false;
+		}
+
+		vSelectButton.addEventListener("mousedown", function() {
+		pressSelectButton();
+		toggleClass(document.getElementById("button-Select-pressed"),"off");
+		});
+
+		vSelectButton.addEventListener("mouseup", function() {
+		releaseSelectButton();
+		toggleClass(document.getElementById("button-Select-pressed"),"off");
+		});
+
+		vSelectButton.addEventListener("mouseout", function() {
+		releaseSelectButton();
+		});
+
+		// START Button
+		var vStartButton = document.getElementById("vStart-button");
+		var isButtonPressed = false;
+		
+		function pressStartButton() {
+		var keyEvent = new KeyboardEvent("keydown", { keyCode: 13 });
+		document.dispatchEvent(keyEvent);
+		isButtonPressed = true;
+		}
+
+		function releaseStartButton() {
+		var keyUpEvent = new KeyboardEvent("keyup", { keyCode: 13 });
+		document.dispatchEvent(keyUpEvent);
+		isButtonPressed = false;
+		}
+
+		vStartButton.addEventListener("mousedown", function() {
+		pressStartButton();
+		toggleClass(document.getElementById("button-Start-pressed"),"off");
+		});
+
+		vStartButton.addEventListener("mouseup", function() {
+		releaseStartButton();
+		toggleClass(document.getElementById("button-Start-pressed"),"off");
+		});
+
+		vStartButton.addEventListener("mouseout", function() {
+		releaseStartButton();
+		});
+
+		// UP Button
+		var vUpButton = document.getElementById("vUp-button");
+		var isButtonPressed = false;
+		
+		function pressUpButton() {
+		var keyEvent = new KeyboardEvent("keydown", { keyCode: 38 });
+		document.dispatchEvent(keyEvent);
+		isButtonPressed = true;
+		}
+
+		function releaseUpButton() {
+		var keyUpEvent = new KeyboardEvent("keyup", { keyCode: 38 });
+		document.dispatchEvent(keyUpEvent);
+		isButtonPressed = false;
+		}
+
+		vUpButton.addEventListener("mousedown", function() {
+		pressUpButton();
+		});
+
+		vUpButton.addEventListener("mouseup", function() {
+		releaseUpButton();
+		});
+
+		vUpButton.addEventListener("mouseout", function() {
+		releaseUpButton();
+		});
+
+		
+		// DOWN Button
+		var vDownButton = document.getElementById("vDown-button");
+		var isButtonPressed = false;
+		
+		function pressDownButton() {
+		var keyEvent = new KeyboardEvent("keydown", { keyCode: 40 });
+		document.dispatchEvent(keyEvent);
+		isButtonPressed = true;
+		}
+
+		function releaseDownButton() {
+		var keyUpEvent = new KeyboardEvent("keyup", { keyCode: 40 });
+		document.dispatchEvent(keyUpEvent);
+		isButtonPressed = false;
+		}
+
+		vDownButton.addEventListener("mousedown", function() {
+		pressDownButton();
+		});
+
+		vDownButton.addEventListener("mouseup", function() {
+		releaseDownButton();
+		});
+
+		vDownButton.addEventListener("mouseout", function() {
+		releaseDownButton();
+		});
+
+
+		// LEFT Button
+		var vLeftButton = document.getElementById("vLeft-button");
+		var isButtonPressed = false;
+		
+		function pressLeftButton() {
+		var keyEvent = new KeyboardEvent("keydown", { keyCode: 37 });
+		document.dispatchEvent(keyEvent);
+		isButtonPressed = true;
+		}
+
+		function releaseLeftButton() {
+		var keyUpEvent = new KeyboardEvent("keyup", { keyCode: 37 });
+		document.dispatchEvent(keyUpEvent);
+		isButtonPressed = false;
+		}
+
+		vLeftButton.addEventListener("mousedown", function() {
+		pressLeftButton();
+		});
+
+		vLeftButton.addEventListener("mouseup", function() {
+		releaseLeftButton();
+		});
+
+		vLeftButton.addEventListener("mouseout", function() {
+		releaseLeftButton();
+		});
+
+
+		// RIGHT Button
+		var vRightButton = document.getElementById("vRight-button");
+		var isButtonPressed = false;
+		
+		function pressRightButton() {
+		var keyEvent = new KeyboardEvent("keydown", { keyCode: 39 });
+		document.dispatchEvent(keyEvent);
+		isButtonPressed = true;
+		}
+
+		function releaseRightButton() {
+		var keyUpEvent = new KeyboardEvent("keyup", { keyCode: 39 });
+		document.dispatchEvent(keyUpEvent);
+		isButtonPressed = false;
+		}
+
+		vRightButton.addEventListener("mousedown", function() {
+		pressRightButton();
+		});
+
+		vRightButton.addEventListener("mouseup", function() {
+		releaseRightButton();
+		});
+
+		vRightButton.addEventListener("mouseout", function() {
+		releaseRightButton();
+		});
+			
+	
+		};
+
+		req.send();
+	
+	}
+    
+    // Get the element with ID "vPower-button"
+    var vPowerButton = document.getElementById("vPower-button");
+
+    // Add a click event listener to the "vPower-button" element
+    vPowerButton.addEventListener("click", function() {
+    if (!nesRunning) {
+        nesStart();
+        toggleClass(document.getElementById("power-on-glow"),"off");
+        toggleClass(document.getElementById("power-on-button"),"off");
+            
+    };
+
+    });
+
+
+	
+	</script>
+	
+</body>
+</html>
