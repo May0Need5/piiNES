@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>GaymBoi Playa - piiNES Emu</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="piiNES-playa-style.css"/>
+	<script src="js/jsnes.min.js"></script>
+	
+</head>
+
+<body>
+
+	<div class="player-wrapper">
+		<canvas id="nes-canvas"  width="256" height="240" ></canvas>
+	</div>
+	
+
+	<div class="GB-Wrapper">
+
+        <button id="vUp-button" class="UpButton"></button>
+		<button id="vDown-button" class="DownButton"></button>
+		<button id="vLeft-button" class="LeftButton"></button>
+		<button id="vRight-button" class="RightButton"></button>
+
+			<div class="off glow" id="power-on-glow"></div>
+			<img class="" src="images/GB_NoScreen_MainREsize.png">
+		
+        <button id="vPower-button" class="PowerButton"></button>
+        	<img class="" src="images/ButtonPower_Off.png">
+			<img class="off" id="power-on-button" src="images/ButtonPower_On.png">
+		
+        <button id="vSelect-button" class="SelectButton"></button>
+			<img class="off" id="button-Select-pressed" src="images/ButtonSelect_pressed.png">
+		
+        <button id="vStart-button" class="StartButton"></button>
+			<img class="off" id="button-Start-pressed" src="images/ButtonStart_pressed.png">
+		
+        <button id="vB-button" class="BButton"></button>
+			<img class="off" id="button-B-pressed" src="images/ButtonB_pressed.png">
+		
+        <button id="vA-button" class="AButton"></button>
+			<img class="off" id="button-A-pressed" src="images/ButtonA_pressed.png">
+		
+	</div>
+
+	<script src="piiNES-playa-script.js"></script>
+</body>
+</html>

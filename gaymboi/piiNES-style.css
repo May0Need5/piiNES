@@ -1,0 +1,105 @@
+body {
+	font-family: Courier, 'Courier New', Courier, monospace;
+    font-weight: bold;
+    background-color: #000000d9;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -khtml-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+    -webkit-tap-highlight-color:none;
+}
+
+@font-face {
+    font-family: freescript;
+    src: url("fonts/FREESCPT.TTF");
+  }
+
+  @font-face {
+    font-family: tungsten;
+    src: url("fonts/Tungsten-Bold.otf");
+  }
+
+header {
+    margin: 15px;
+    display: block;
+    position: relative;
+    color: white;
+}
+
+
+
+.d0ng3r-font {
+    font-family: freescript;
+    color: red;
+    font-size: 2.2em;
+    text-shadow: 1px 1px #fbf7f7;
+
+}
+  
+.divider {
+    display: block;
+    position: relative;
+    margin: 15px 0;
+    height: 2px;
+    background-color: #2f4f4f30;
+    box-shadow: 0px 0px 9px 6px #000000a8;
+}
+
+.container {
+    position: absolute;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: 1fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    width: 98%;  
+}
+
+.nesRomList {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0 auto;
+    width: 90%;
+}
+
+button.launchROM {
+    margin: 5px auto;
+    font-family: monospace;
+    padding: 7px 14px;
+    font-size: 1.2rem;
+    display: block;
+    width: 250px;
+    height: 57px;
+    border-radius: 15px;
+    cursor: pointer;
+    background-color: silver;
+    color: black;
+}
+
+button.launchROM:hover {
+    background-color: rgb(180, 86, 86);
+    color: black; 
+}
+
+@media screen and (max-width: 600px) {
+    div.container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    button.launchROM:hover { 
+        background-color: silver;
+        color: black;
+     
+    }
+  }
