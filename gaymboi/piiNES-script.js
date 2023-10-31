@@ -47,3 +47,11 @@ function showModalPopUp6() {
 	popupWindow6.focus();
 	LoadModalDiv();
 	};
+
+function showModalPopUp7() {
+
+	var popupWindow7 = window.open("piiNES-playa.html?file=friday", "ModalPopUp", "width=400,height=750",  "top=50");
+	
+	popupWindow7.focus();
+	LoadModalDiv();
+	};
